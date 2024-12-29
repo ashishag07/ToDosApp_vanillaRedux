@@ -1,4 +1,4 @@
-import { ADD_TODO, TOGGLE_TODO } from "../actions/todoAction";
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   todos: [
@@ -7,30 +7,26 @@ const initialState = {
   ],
 };
 
-export function todoReducer(state = initialState, action) {
-  switch (action.type) {
-    case ADD_TODO:
-      return {
-        ...state,
-        todos: [
-          ...state.todos,
-          {
-            text: action.text,
-            completed: false,
-          },
-        ],
-      };
-    case TOGGLE_TODO:
-      return {
-        ...state,
-        todos: state.todos.map((item, idx) => {
-          if (idx === action.index) {
-            item.completed = !item.completed;
-          }
-          return item;
-        }),
-      };
-    default:
-      return state;
-  }
-}
+const todoSlice = createSlice({
+  name: "todo",
+  initialState: initialState,
+  reducers: {
+    add: (state, action) => {
+      state.todos.push({ text: action.payload, completed: false });
+    },
+    toggle: (state, action) => {
+      state.todos.map((todo, idx) => {
+        if (idx === action.payload) {
+          todo.completed = !todo.completed;
+        }
+        return todo;
+      });
+    },
+  },
+});
+
+export const todoReducer = todoSlice.reducer;
+
+export const todoActions = todoSlice.actions;
+
+export const todoSelector = (state) => state.todoReducer.todos;
